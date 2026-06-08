@@ -17,7 +17,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
         if not availability:
             raise serializers.ValidationError("Doctor not available")
 
-        if not (availability.start_time <= availability.end_time):
+        if not (availability.start_time <=  time <= availability.end_time):
             raise serializers.ValidationError(
             "Doctor is not available on this date."
         )
