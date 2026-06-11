@@ -74,3 +74,34 @@ def get_availability(request):
     serializer = AvailabilitySerializer(queryset, many=True)
 
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def doctor_appointments(request):
+
+    appointments = Appointment.objects.filter(
+        doctor = request.user
+    )
+
+    serializer = AppointmentSerializer(appointments, many=True)
+
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def confirm_appointment(request,id):
+
+    appointment = Appointment.objects.get(id=id)
+
+    if request.user.role != 'doctor':
+        return Response({"error": "Only doctors allowed"}, status=403)
+    
+    if appointment.doctor != request.user:
+        return Response({"error": "Not your appointment"}, status=403)
+    
+    appointment.status = "confirmed"
+    appointment.save()
+
+    return Response({"message": "Appointment confirmed"})
