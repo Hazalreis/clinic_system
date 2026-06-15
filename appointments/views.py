@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -93,7 +93,7 @@ def doctor_appointments(request):
 @permission_classes([IsAuthenticated])
 def confirm_appointment(request,id):
 
-    appointment = Appointment.objects.get(id=id)
+    appointment = get_object_or_404(Appointment, id=id)
 
     if request.user.role != 'doctor':
         return Response({"error": "Only doctors allowed"}, status=403)
@@ -105,3 +105,17 @@ def confirm_appointment(request,id):
     appointment.save()
 
     return Response({"message": "Appointment confirmed"})
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def patient_dashboard(request):
+
+    appointments = Appointment.objects.filter(
+        patient = request.user
+    ).order_by('-date', '-time')
+
+    serializer = AppointmentSerializer(appointments, many=True)
+
+    return Response(serializer.data)
