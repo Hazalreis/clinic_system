@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doctor Dashboard</title>
+</head>
+<body>
+
+    <h1>Doctor Dashboard</h1>
+
+    <h2>Add Availability</h2>
+
+    <input id="date" type="date">
+    <input id="start" type="time">
+    <input id="end" type="time">
+
+    <button onclick="addAvailability()">Add</button>
+
+    <hr>
+
+    <div id="appointments"></div>
+
+    <script>
+        async function addAvailability(){
+
+            const token = localStorage.getItem("access")
+
+            const date = document.getElementById("date").value;
+            const start = document.getElementById("start").value;
+            const end = document.getElementById("end").value;
+
+            const response = await fetch("http://127.0.0.1:8000/appointments/availability/",{
+                method:"POST",
+                headers:{
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`  
+                },
+                body: JSON.stringify({
+                    date:date,
+                    start_time:start + ":00",
+                    end_time:end + ":00"
+                })
+            })
+
+        const data = await response.json();
+
+        console.log("STATUS:", response.status);
+        console.log("DATA:", data);
+
+        if (response.ok) {
+            alert("Added");
+        } else {
+            alert("Error: " + JSON.stringify(data));
+        }
+
+        }
+
+
+        async function loadAppointments(){
+            
+            const token = localStorage.getItem("access")
+
+            const response = await fetch("http://127.0.0.1:8000/appointments/doctor/", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+
+            const data = await response.json()
+
+            console.log(data)
+        }
+
+        loadAppointments();
+    </script>
+
+</body>
+</html>

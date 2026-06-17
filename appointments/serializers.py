@@ -44,3 +44,4 @@ class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Availability
         fields = '__all__'
+        read_only_fields = ['doctor']
