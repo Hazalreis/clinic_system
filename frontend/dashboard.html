@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        async function init() {
+
+            const token = localStorage.getItem("access");
+
+            if (!token) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const response = await fetch("http://127.0.0.1:8000/appointments/me/", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const user = await response.json();
+
+            if (user.role === "doctor") {
+                window.location.href = "doctor-dashboard.html";
+            } else {
+                window.location.href = "patient-dashboard.html";
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

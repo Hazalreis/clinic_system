@@ -6,4 +6,5 @@ urlpatterns = [
     path('doctor/', doctor_appointments),
     path('patient/', patient_dashboard),
     path('confirm/<int:id>/', confirm_appointment),
+    path('me/', me)
 ]

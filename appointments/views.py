@@ -8,7 +8,6 @@ from .serializers import AppointmentSerializer, AvailabilitySerializer
 from rest_framework.permissions import BasePermission
 
 
-
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):
         return (
@@ -119,3 +118,14 @@ def patient_dashboard(request):
     serializer = AppointmentSerializer(appointments, many=True)
 
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def me(request):
+
+    return Response({
+        "username" : request.user.username,
+        "role" : request.user.role
+    })
+     
