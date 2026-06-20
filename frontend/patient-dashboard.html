@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Dashboard</title>
+</head>
+<body>
+
+<h1>Patient Dashboard</h1>
+
+<h2>Available Times</h2>
+
+<div id="availability"></div>
+
+<script>
+    async function loadAvailability() {
+        
+        const token = localStorage.getItem("access");
+
+        const response = await fetch("http://127.0.0.1:8000/appointments/get_availability/", {
+           headers:{
+            "Authorization": `Bearer ${token}`
+           } 
+        })
+
+        const data = await response.json();
+
+        const container = document.getElementById('availability')
+
+        container.innerHTML = data.map(slot => `
+            <div>
+            <p>Doctor: ${slot.doctor}</p>
+            <p>Date: ${slot.date}</p>
+            <p>From: ${slot.start_time}</p>
+            <p>To: ${slot.end_time}</p>
+
+            <button onclick="book('${slot.doctor}', '${slot.date}', '${slot.start_time}')">
+                Book
+            </button>
+        </div>
+        <hr>
+    `).join("");
+    }
+
+    async function book(doctor, date, time) {
+        
+        const token = localStorage.getItem("access");
+
+        const respone = await fetch("http://127.0.0.1:8000/appointments/create_appointment/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+            doctor: doctor,
+            date: date,
+            time: time
+        })
+        });
+
+        const data = await respone.json();
+
+        alert(data.message || "Booked");
+    }
+
+    loadAvailability()
+
+</script>
+
+</body>
+</html>
